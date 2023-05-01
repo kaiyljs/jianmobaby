@@ -1,1 +1,35 @@
-hello
+# Calyx build artifacts
+calyx/
+target/
+*.class
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# IDE/Editor specific
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+*.class
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.rar
+*.bak
+*.swp
+*~
+.DS_Store
+
+# Misc
+*.log
+*.out
+*.repl
+*.repl-history
+*.node-version
