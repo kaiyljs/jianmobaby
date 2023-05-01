@@ -1,0 +1,1795 @@
+name: 四扇推拉门1
+
+variables:
+
+  #这两个字段，代表离地，在popup的离地上写position.z，就不用每个子组件上写离地的变量
+  - name: isInGroup 
+    type: boolean
+    value: false 
+
+  - name: position
+    type: point3d
+    value: [0, 0, 0]
+
+  #定义一个墙体宽度的变量
+  - name: width
+    type: number
+    value: 0.2
+
+  # 墙厚，用于自适应门的厚度
+  - name: wallWidth
+    type: number
+    value: width
+
+  # 本房间下沉值 
+  - name: thisRoomFloorHeight
+    type: number
+    value: -0.02
+
+  # 隔壁房间下沉值 
+  - name: nextRoomFloorHeight
+    type: number
+    value: -0.02
+
+  # 最小下沉值，确认门槛石具体厚度
+  - name: minFloorHeight
+    type: number
+    value:
+      - conditions:
+          - thisRoomFloorHeight < nextRoomFloorHeight
+        value: -thisRoomFloorHeight
+      - value: -nextRoomFloorHeight
+
+  # 本房间完成面厚度
+  - name: thisfsThick
+    type: number
+    value: 0.02
+
+  # 隔壁房间完成面厚度
+  - name: nextfsThick
+    type: number
+    value: 0.02
+
+  #--------------------天花高度-----------------------------------
+
+  - name: ceilHeightF
+    type: number
+    value: 2.45 
+
+  - name: ceilHeightB
+    type: number
+    value: 2.35
+
+
+
+  #--------------------门洞规格-----------------------------------
+  # 门洞长
+  - name: mendongLength
+    type: number
+    value: 2.4  # 门套长50，盖墙20
+
+  # 门洞高
+  - name: mendongHeight
+    type: number
+    value: 2.2
+  #--------------------门洞规格-----------------------------------
+
+
+
+  #--------------------门框规格-----------------------------------
+
+  # 金属板厚度
+  - name: jsbanWidth
+    type: number
+    value: 0.08
+
+
+  # 大板长度
+  - name: dabanLength
+    type: number
+    value: wallWidth-0.045
+
+  # 小板长度
+  - name: xiaobanLength
+    type: number
+    value: 0.045
+
+  # 大板厚度
+  - name: dabanWidth
+    type: number
+    value: 0.052
+
+  # 小板厚度
+  - name: xiaobanWidth
+    type: number
+    value: 0.040
+
+  # 门框与门板之间的缝隙
+  - name: fengLength
+    type: number
+    value: 0.003
+
+  # # 门框规格，门洞内测除去大板的长度
+  # - name: menkuangLength
+  #   type: number
+  #   value: mendongLength - dabanLength*2 # 门套长50，盖墙20
+
+  # # 门框规格，门洞内测除去大板的高度
+  # - name: menkuangHeight
+  #   type: number
+  #   value: mendongHeight - dabanLength
+  # #--------------------门框规格-----------------------------------
+
+
+
+  #--------------------门套规格-----------------------------------
+  # 门套自身长度
+  - name: mentaoLength
+    type: number
+    value: 0.04
+
+  # 门套自身厚度
+  - name: mentaoWidth
+    type: number
+    value: 0.018
+
+  # 门套自身厚度
+  - name: zhijiaomentaoWidth
+    type: number
+    value: 0.017
+
+  # 外门套盖墙的大小
+  - name: neigaiqaingLength
+    type: number
+    value: 0.007
+
+  # 内门套盖墙的大小
+  - name: gaiqiangLength
+    type: number
+    value: 0.007
+
+  # # 门套在门洞里面的大小
+  # - name: neiceLength
+  #   type: number
+  #   value: mentaoLength - gaiqiangLength
+
+  # # 门套高度  总高
+  # - name: totalHeight
+  #   type: number
+  #   value: mendongHeight + 0.02
+
+  # 门套长度 总长
+  - name: totalLength
+    type: number
+    value: mendongHeight + gaiqiangLength*2
+
+
+  # # 上门套长度  总长减去两边门套的长度
+  # - name: zongSLength
+  #   type: number
+  #   value: mendongLength + gaiqiangLength*2 - mentaoLength*2
+
+  #--------------------门套规格-----------------------------------
+
+
+  #--------------------门板规格-----------------------------------
+
+  # 门板下离地
+  - name: menbanlidi
+    type: number
+    value: 0.007
+
+  # 门板自身长度 
+  - name: menbanLength
+    type: number
+    value: (mendongLength - 0.017*2 +0.016)/4  # 减去的是门套盖墙的距离，大板的距离和缝隙的距离，尽量用门洞一个控制多个
+
+  # 门板自身高度  
+  - name: menbanHeight
+    type: number
+    value: mendongHeight -0.066- menbanlidi # 减去的是门套盖墙的距离，大板的距离和缝隙的距离，尽量用门洞一个控制多个
+
+  # 门板自身厚
+  - name: menbanWidth
+    type: number
+    value: 0.03
+
+  # 两门板间距
+  - name: menbanJJ
+    type: number
+    value: 0.01
+
+  # 门板门框宽
+  - name: menbanmkWidth
+    type: number
+    value: 0.016
+  # 门板材质
+  - name: doorMaterial
+    type: material
+    value: PH020DXTJADG0WQQ0
+
+
+
+
+  #--------------------门头板规格---------------------------------
+
+
+
+  # 门头板自身长度 
+  - name: mentbLength
+    type: number
+    value: mendongLength - 0.021*2  
+
+  # 门头板自身高度  
+  - name: mentbHeightB
+    type: number
+    value: ceilHeightB-mendongHeight+0.021 
+
+  # 门头板自身厚度 
+  - name: mentbWidth
+    type: number
+    value: 0.009
+
+  # 门头板自身高度  
+  - name: mentbHeightF
+    type: number
+    value: ceilHeightF-mendongHeight+0.04
+
+
+  #--------------------石材脚座---------------------------------
+  # 是否有门槛石  注意这里只能用boolean的类型，算量的地方只支持这个
+  - name: isHavejiaozuo
+    type: boolean
+    value: true
+
+
+  # 门槛石 材质
+  - name: doorjiaozuoMaterial
+    type: material
+    value: PJDA5TJY31SMTF12Y
+
+
+
+  #--------------------门槛石规格---------------------------------
+  # 是否有门槛石  注意这里只能用boolean的类型，算量的地方只支持这个
+  - name: isHaveStone
+    type: boolean
+    value: true
+
+
+  - name: IJJIAOXIAO
+    type: boolean
+    value: true
+
+
+  # 门槛石 厚度
+  - name: doorStoneHeight
+    type: number
+    value: minFloorHeight
+
+  # # 门槛石造型
+  # - name: stoneStyle
+  #   type: string
+  #   value: 梯字型
+
+  # # 门槛石方向 有造型的时候
+  # - name: doordirection
+  #   type: string
+  #   value: 朝外
+
+  # 门槛石 材质
+  - name: doorStoneMaterial
+    type: material
+    value: PJDA5TJY31SMTF12Y
+
+  # # 门槛石侧面 材质
+  # - name: cemianMaterial
+  #   type: material
+  #   value: PAR90MSF1I3TQYU4I
+
+  # # 门套与门槛石的关系
+  # - name: doorrelationship
+  #   type: string
+  #   value: 门套在门槛石上
+
+  # 是否有门槛石金属收边条
+  - name: sideEntry
+    type: string
+    value: 不生成
+
+
+  # 是否有门槛石金属收边条
+  - name: mentaoEntry
+    type: string
+    value: 90度直拼
+
+
+
+  # 金属收边条的方向
+  - name: sidedirection
+    type: string
+    value: 朝外
+
+
+  # # 是否有石材基座
+  # - name: Stonebase
+  #   type: string
+  #   value: 否
+
+  # # 石材基座的高度
+  # - name: StonebaseHeight
+  #   type: number
+  #   value: 0.06
+
+  #--------------------门槛石规格---------------------------------
+
+  #--------------------------五金把手--------------------------------
+
+  # 五金材质
+  - name: wujinMaterial
+    type: material
+    value: PEIARRYBT2R7835K8
+
+# 把手外侧
+  - name: waibashou1
+    type: uuid
+    value: PBDX978QXCT944YJ0
+
+# 把手内测
+  - name: neibashou1
+    type: uuid
+    value: PB3WRGRL8FOBHVT8J
+
+# 把手外
+  - name: waihandle
+    type: uuid
+    value: PBDX978QXCT944YJ0
+
+# 把手内
+  - name: neihandle
+    type: uuid
+    value: PB3WRGRL8FOBHVT8J
+
+# 把手外侧
+  - name: Outsidehandle
+    type: uuid
+    value: 
+      - conditions:
+          - waihandle == waibashou1
+        value: PBDX978QXCT944YJ0
+      # - conditions:
+      #     - handle == bashou2
+      #   value: PA9KTVQ8KRUFVCEH7
+
+# 把手内侧
+  - name: Insidehandle
+    type: uuid
+    value: 
+      - conditions:
+          - neihandle == neibashou1
+        value: PB3WRGRL8FOBHVT8J
+      # - conditions:
+      #     - handle == bashou2
+      #   value: PA9KTVQ8KRUFVCEH7
+  #--------------------------五金把手--------------------------------
+
+
+  #--------------------------五金合页--------------------------------
+
+# 子母合页
+  - name: neiheye1
+    type: uuid
+    value: PGCKO3BETCU531G4P
+
+# 合页
+  - name: neiHinge
+    type: uuid
+    value: PGCKO3BETCU531G4P
+
+# 合页
+  - name: Hinge
+    type: uuid
+    value: 
+      - conditions:
+          - neiHinge == neiheye1
+        value: PGCKO3BETCU531G4P
+  #--------------------------五金合页--------------------------------
+
+  #--------------------------五金门吸--------------------------------
+
+# 门吸
+  - name: menxi1
+    type: uuid
+    value: PBIWBGISC6Y7A1Z3C
+
+# 门吸
+  - name: Doorstopper
+    type: uuid
+    value: PBIWBGISC6Y7A1Z3C
+
+# 门吸
+  - name: suction
+    type: uuid
+    value: 
+      - conditions:
+          - Doorstopper == menxi1
+        value: PBIWBGISC6Y7A1Z3C
+
+
+  # 正方向完成面厚
+  - name: Zfhick
+    type: number
+    value: 0
+  # 负方向完成面厚
+  - name: Ffhick
+    type: number
+    value: 0
+
+popup:
+  - widget: group
+    title: 门洞规格
+    tabName: 基础设置
+    columns: 1
+    items:
+
+      - title: 宽度
+        type: length
+        value: mendongLength
+
+      - title: 高度
+        type: length
+        value: mendongHeight
+
+
+
+  - widget: group
+    tabName: 基础设置
+    title: 门部件信息
+    items:
+
+          # - title: 门套拼接方式
+          #   type: drop
+          #   inputable: false
+          #   value: mentaoEntry
+          #   options:
+          #     - "90度直拼"
+          #     - "45度斜拼"
+          - widget: radio
+            title: 是否生成门槛石
+            value: isHaveStone
+            options:
+              - label: 是
+                value: true
+              - label: 否
+                value: false
+
+
+          - widget: radio
+            title: 是否插入脚线
+            value: IJJIAOXIAO
+            options:
+              - label: 是
+                value: true
+              - label: 否
+                value: false
+
+
+          # - widget: radio
+          #   title: 是否生成石材脚座
+          #   value: isHavejiaozuo
+          #   options:
+          #     - label: 是
+          #       value: true
+          #     - label: 否
+          #       value: false
+
+
+
+          # - conditions:
+          #     - isHaveStone == false
+              # - stoneStyle == 一字型
+          - widget: radio
+            title: 收边条
+            value: sideEntry
+            options: 
+              - 生成
+              - 不生成
+
+  - widget: group
+    tabName: 高级编辑
+    title: 材质编辑
+    items:
+      - widget: group
+        items:
+          - title: 门金属材质
+            type: material
+            value: doorMaterial
+            options:
+                 - PEHDX8Y6FATDBY0J5
+                 - PEHDXFZ1E9ELAZY15
+
+          - conditions:
+              - isHaveStone == true
+            title: 门槛石材质
+            type: material
+            value: doorStoneMaterial
+            options:
+              - PJDA5TJY31SMTF12Y
+              - PGZTD7CSQU40WAJ5Y
+
+          - conditions:
+              - isHaveStone == true
+            title: 石材脚座材质
+            type: material
+            value: doorjiaozuoMaterial
+            options:
+              - PJDA5TJY31SMTF12Y
+              - PGZTD7CSQU40WAJ5Y
+
+
+
+
+components:
+
+
+
+
+
+  # # --------------------------------上轨道-----------------------------------------
+
+  - id: PH0QSPQE2UAL8FUYP
+    # materialName: 'counter' 
+    material: doorMaterial
+    position: [0 , 0, mendongHeight- (0.08)/2]
+    length: mendongLength
+    height: 0.08
+    width: menbanWidth*2+menbanJJ
+    rotation: [0, 0, 0]
+    show2D: false
+    xFlip: true
+
+  # # # --------------------------------下轨道-----------------------------------------
+
+  - id: PH0QSPQE2UAP5O63G
+    # materialName: 'counter' 
+    material: doorMaterial
+    position: [0 ,menbanJJ/2+menbanWidth/2, 0.014/2]
+    length: mendongLength
+    height: 0.014
+    width: menbanWidth-0.01
+    rotation: [0, 0, 0]
+    show2D: false
+    xFlip: true
+
+  - id: PH0QSPQE2UAP5O63G
+    # materialName: 'counter' 
+    material: doorMaterial
+    position: [0 ,-menbanJJ/2-menbanWidth/2, 0.014/2]
+    length: mendongLength
+    height: 0.014
+    width: menbanWidth-0.01
+    rotation: [0, 0, 0]
+    show2D: false
+    xFlip: true
+
+  # # --------------------------------侧轨道-----------------------------------------
+
+  - id: PH0QSPQE2UAQTNQ7Y
+    # materialName: 'counter' 
+    material: doorMaterial
+    position: [mendongLength/2-(mentaoLength-gaiqiangLength)/2,menbanJJ/2+menbanWidth/2, mendongHeight/2]
+    length: mentaoLength-gaiqiangLength
+    height: mendongHeight
+    width: menbanJJ+menbanWidth
+    rotation: [0, 0, 0]
+    show2D: false
+    xFlip: true
+
+  - id: PH0QSPQE2UAQTNQ7Y
+    # materialName: 'counter' 
+    material: doorMaterial
+    position: [-mendongLength/2+(mentaoLength-gaiqiangLength)/2 ,-menbanJJ/2-menbanWidth/2, mendongHeight/2]
+    length: mentaoLength-gaiqiangLength
+    height: mendongHeight
+    width: menbanJJ+menbanWidth
+    rotation: [0, 0, 0]
+    show2D: false
+    # xFlip: true
+
+
+
+
+  #定义模型在2d上的视图
+item2Ds:
+  # 当2d视图是图片时
+  # - type: image
+  #   url: 'https://jtl3d.oss-cn-hangzhou.aliyuncs.com/Data/Dwg/%E9%87%91%E8%9E%B3%E8%9E%82%E5%AE%B6%E9%A2%84%E8%A7%88%E5%9B%BE/door/Open%20door-Door%20leaf.png'
+  #   position: [0, mendongLength / 2]
+  #   # 具体尺寸
+  #   size: [mendongLength, mendongLength]
+  #   rotation: 0
+  #   # xFlip: true
+
+  # 2D视图画一个轮廓轮廓内可填充
+  - type: polyline
+    color: '#FFFFFF'
+    # 轮廓内填充
+    fill: '#FFFFFF'
+    opacity: 0.5
+    path: [
+      [mendongLength / 2, wallWidth/2],
+      [mendongLength / 2, -wallWidth/2],
+      [-mendongLength / 2, -wallWidth/2],
+      [-mendongLength / 2, wallWidth/2]
+    ]
+
+outline2D:
+  - [
+      [mendongLength / 2, wallWidth/2],
+      [mendongLength / 2, -wallWidth/2],
+      [-mendongLength / 2, -wallWidth/2],
+      [-mendongLength / 2, wallWidth/2]
+    ]
+item3Ds:
+
+
+          # 金属门套
+  - type: extrude
+    materials:
+      - doorMaterial
+    outline: [
+        [-0.015/2 ,-wallWidth/2-0.02],
+        [0.015/2,-wallWidth/2-0.02],
+        [0.015/2,wallWidth/2+0.02],
+        [-0.015/2,wallWidth/2+0.02],
+
+        ]
+    extend: mendongHeight
+    position: [-mendongLength/2+0.02/2,0, 0]
+    rotation: [0, 0, 0]
+
+  - type: extrude
+    materials:
+      - doorMaterial
+    outline: [
+        [-0.015/2 ,-wallWidth/2-0.02],
+        [0.015/2,-wallWidth/2-0.02],
+        [0.015/2,wallWidth/2+0.02],
+        [-0.015/2,wallWidth/2+0.02],
+
+        ]
+    extend: mendongHeight
+    position: [mendongLength/2-0.02/2,0, 0]
+    rotation: [0, 0, 0]
+
+
+  - type: extrude
+    materials:
+      - doorMaterial
+    outline: [
+        [-mendongLength/2 ,-wallWidth/2-0.02],
+        [mendongLength/2,-wallWidth/2-0.02],
+        [mendongLength/2,wallWidth/2+0.02],
+        [-mendongLength/2,wallWidth/2+0.02],
+
+        ]
+    extend: -0.01
+    position: [0,0, mendongHeight]
+    rotation: [0, 0, 0]
+
+          # 金属门框左
+  - type: extrude
+    materials:
+      - doorMaterial
+    outline: [
+        [-mentaoLength/2 ,0],
+        [mentaoLength/2,0],
+        [mentaoLength/2,jsbanWidth/2],
+        [-mentaoLength/2,jsbanWidth/2],
+
+        ]
+    extend: mendongHeight
+    position: [-mendongLength/2+mentaoLength/2,0, 0]
+    rotation: [0, 0, 0]
+  - type: extrude
+    materials:
+      - doorMaterial
+    outline: [
+
+        [-mentaoLength/2 ,-jsbanWidth/2],
+        [mentaoLength/2,-jsbanWidth/2],
+        [mentaoLength/2,-menbanWidth-menbanJJ/2],
+        [-mentaoLength/2,-menbanWidth-menbanJJ/2],
+        ]
+    extend: mendongHeight
+    position: [-mendongLength/2+mentaoLength/2,0, 0]
+    rotation: [0, 0, 0]
+
+          # 金属门框右
+  - type: extrude
+    materials:
+      - doorMaterial
+    outline: [
+        [-mentaoLength/2 ,menbanWidth+menbanJJ/2],
+        [mentaoLength/2,menbanWidth+menbanJJ/2],
+
+        [mentaoLength/2,jsbanWidth/2],
+        [-mentaoLength/2,jsbanWidth/2],
+        ]
+    extend: mendongHeight
+    position: [mendongLength/2-mentaoLength/2,0, 0]
+    rotation: [0, 0, 0]
+  - type: extrude
+    materials:
+      - doorMaterial
+    outline: [
+
+        [-mentaoLength/2 ,-jsbanWidth/2],
+        [mentaoLength/2,-jsbanWidth/2],
+
+        [mentaoLength/2,0],
+        [-mentaoLength/2,0],
+        ]
+    extend: mendongHeight
+    position: [mendongLength/2-mentaoLength/2,0, 0]
+    rotation: [0, 0, 0]
+
+
+          # 金属门框上
+  - type: extrude
+    materials:
+      - doorMaterial
+    outline: [
+        [-mendongLength/2 ,menbanWidth+menbanJJ/2],
+        [mendongLength/2,menbanWidth+menbanJJ/2],
+        [mendongLength/2,jsbanWidth/2],
+        [-mendongLength/2,jsbanWidth/2],
+        ]
+    extend: -mentaoLength
+    position: [0,0, mendongHeight]
+    rotation: [0, 0, 0]
+
+  - type: extrude
+    materials:
+      - doorMaterial
+    outline: [
+        [-mendongLength/2 ,-jsbanWidth/2],
+        [mendongLength/2,-jsbanWidth/2],
+        [mendongLength/2,-menbanWidth-menbanJJ/2],
+        [-mendongLength/2,-menbanWidth-menbanJJ/2],
+        ]
+    extend: -mentaoLength
+    position: [0,0, mendongHeight]
+    rotation: [0, 0, 0]
+
+
+
+          # 门板
+  - type: extrude
+    materials:
+      - doorMaterial
+    outline: [
+        [-menbanLength/2 ,-menbanHeight/2],
+        [menbanLength/2,-menbanHeight/2],
+        [menbanLength/2,menbanHeight/2],
+        [-menbanLength/2,menbanHeight/2],
+        ]
+    extend: menbanWidth
+    position: [-menbanLength/2+0.008,-menbanJJ/4, menbanlidi+menbanHeight/2]
+    rotation: [90, 0, 0]
+
+    holes: 
+      - [
+        [-menbanLength/2+menbanmkWidth ,-menbanHeight/2+menbanmkWidth],
+        [menbanLength/2-menbanmkWidth,-menbanHeight/2+menbanmkWidth],
+        [menbanLength/2-menbanmkWidth,menbanHeight/2-menbanmkWidth],
+        [-menbanLength/2+menbanmkWidth,menbanHeight/2-menbanmkWidth],
+        ]
+
+  - type: extrude
+    materials:
+      - doorMaterial
+    outline: [
+        [-menbanLength/2 ,-menbanHeight/2],
+        [menbanLength/2,-menbanHeight/2],
+        [menbanLength/2,menbanHeight/2],
+        [-menbanLength/2,menbanHeight/2],
+        ]
+    extend: menbanWidth
+    position: [menbanLength/2-0.008,-menbanJJ/4, menbanlidi+menbanHeight/2]
+    rotation: [90, 0, 0]
+
+    holes: 
+      - [
+        [-menbanLength/2+menbanmkWidth ,-menbanHeight/2+menbanmkWidth],
+        [menbanLength/2-menbanmkWidth,-menbanHeight/2+menbanmkWidth],
+        [menbanLength/2-menbanmkWidth,menbanHeight/2-menbanmkWidth],
+        [-menbanLength/2+menbanmkWidth,menbanHeight/2-menbanmkWidth],
+        ]
+          # 玻璃
+  - type: extrude
+    materials:
+      - PGD5QZPEINC46MUQ3
+    outline: [
+        [-menbanLength/2 ,-menbanHeight/2],
+        [menbanLength/2,-menbanHeight/2],
+        [menbanLength/2,menbanHeight/2],
+        [-menbanLength/2,menbanHeight/2],
+        ]
+    extend: 0.01
+    position: [-menbanLength/2+0.008,0.005-menbanJJ/2-menbanWidth/2, menbanlidi+menbanHeight/2]
+    rotation: [90, 0, 0]
+
+
+  - type: extrude
+    materials:
+      - PGD5QZPEINC46MUQ3
+    outline: [
+        [-menbanLength/2 ,-menbanHeight/2],
+        [menbanLength/2,-menbanHeight/2],
+        [menbanLength/2,menbanHeight/2],
+        [-menbanLength/2,menbanHeight/2],
+        ]
+    extend: 0.01
+    position: [menbanLength/2-0.008,0.005-menbanJJ/2-menbanWidth/2, menbanlidi+menbanHeight/2]
+    rotation: [90, 0, 0]
+
+
+          # 门板
+  - type: extrude
+    materials:
+      - doorMaterial
+    outline: [
+        [-menbanLength/2 ,-menbanHeight/2],
+        [menbanLength/2,-menbanHeight/2],
+        [menbanLength/2,menbanHeight/2],
+        [-menbanLength/2,menbanHeight/2],
+        ]
+    extend: menbanWidth
+    position: [-menbanLength/2*3+0.008,menbanWidth+menbanJJ/4, menbanlidi+menbanHeight/2]
+    rotation: [90, 0, 0]
+
+    holes: 
+      - [
+        [-menbanLength/2+menbanmkWidth ,-menbanHeight/2+menbanmkWidth],
+        [menbanLength/2-menbanmkWidth,-menbanHeight/2+menbanmkWidth],
+        [menbanLength/2-menbanmkWidth,menbanHeight/2-menbanmkWidth],
+        [-menbanLength/2+menbanmkWidth,menbanHeight/2-menbanmkWidth],
+        ]
+
+  - type: extrude
+    materials:
+      - doorMaterial
+    outline: [
+        [-menbanLength/2 ,-menbanHeight/2],
+        [menbanLength/2,-menbanHeight/2],
+        [menbanLength/2,menbanHeight/2],
+        [-menbanLength/2,menbanHeight/2],
+        ]
+    extend: menbanWidth
+    position: [menbanLength/2*3-0.008,menbanWidth+menbanJJ/4, menbanlidi+menbanHeight/2]
+    rotation: [90, 0, 0]
+
+    holes: 
+      - [
+        [-menbanLength/2+menbanmkWidth ,-menbanHeight/2+menbanmkWidth],
+        [menbanLength/2-menbanmkWidth,-menbanHeight/2+menbanmkWidth],
+        [menbanLength/2-menbanmkWidth,menbanHeight/2-menbanmkWidth],
+        [-menbanLength/2+menbanmkWidth,menbanHeight/2-menbanmkWidth],
+        ]
+          # 玻璃
+  - type: extrude
+    materials:
+      - PGD5QZPEINC46MUQ3
+    outline: [
+        [-menbanLength/2 ,-menbanHeight/2],
+        [menbanLength/2,-menbanHeight/2],
+        [menbanLength/2,menbanHeight/2],
+        [-menbanLength/2,menbanHeight/2],
+        ]
+    extend: 0.01
+    position: [-menbanLength/2*3+0.008,0.005+menbanJJ/2+menbanWidth/2, menbanlidi+menbanHeight/2]
+    rotation: [90, 0, 0]
+
+
+  - type: extrude
+    materials:
+      - PGD5QZPEINC46MUQ3
+    outline: [
+        [-menbanLength/2 ,-menbanHeight/2],
+        [menbanLength/2,-menbanHeight/2],
+        [menbanLength/2,menbanHeight/2],
+        [-menbanLength/2,menbanHeight/2],
+        ]
+    extend: 0.01
+    position: [menbanLength/2*3-0.008,0.005+menbanJJ/2+menbanWidth/2, menbanlidi+menbanHeight/2]
+    rotation: [90, 0, 0]
+
+
+
+
+
+
+
+        # 金属线条收边条
+  - conditions:
+        # - isHaveStone == false
+        - sideEntry == 生成
+    type: extrude
+    materials:
+      - wujinMaterial
+    outline: [
+        [-mendongLength/2 ,-0.01/2],
+        [mendongLength/2,-0.01/2],
+        [mendongLength/2,0.01/2],
+        [-mendongLength/2,0.01/2],
+        ]
+    extend: 0.001
+    position: [0,wallWidth/2, 0]
+    rotation: [0, 0, 0]
+
+        # 门槛石
+  - conditions:
+        - isHaveStone == true
+    type: extrude
+    materials:
+      - doorjiaozuoMaterial
+    outline: [
+        [-mendongLength/2 ,-wallWidth/2],
+        [mendongLength/2,-wallWidth/2],
+        [mendongLength/2,wallWidth/2],
+        [-mendongLength/2,wallWidth/2],
+        ]
+    extend: minFloorHeight+0.001
+    position: [0,0, -minFloorHeight]
+    rotation: [0, 0, 0]
+
+
+
+
+fs:
+  - path: [
+      [-mendongLength/2,-wallWidth/2,0],
+      [mendongLength/2,-wallWidth/2,0,],
+      [mendongLength/2,wallWidth/2,0],
+      [-mendongLength/2,wallWidth/2,0]
+      ]
+    type: floor
+
+
+  - path: [
+      [-mendongLength/2,-wallWidth/2,mendongHeight],
+      [mendongLength/2,-wallWidth/2,mendongHeight,],
+      [mendongLength/2,0/2,mendongHeight],
+      [-mendongLength/2,0/2,mendongHeight]
+      ]
+    type: wall
+
+  - path: [
+      [-mendongLength/2,-wallWidth/2,mendongHeight],
+      [-mendongLength/2,-wallWidth/2,0,],
+      [-mendongLength/2,0/2,0],
+      [-mendongLength/2,0/2,mendongHeight]
+      ]
+    type: wall
+
+  - path: [
+      [mendongLength/2,-wallWidth/2,mendongHeight],
+      [mendongLength/2,-wallWidth/2,0,],
+      [mendongLength/2,0/2,0],
+      [mendongLength/2,0/2,mendongHeight]
+      ]
+    type: wall
+
+
+
+
+
+
+
+
+
+  - path: [
+      [-mendongLength/2,-0/2,mendongHeight],
+      [mendongLength/2,-0/2,mendongHeight,],
+      [mendongLength/2,wallWidth/2,mendongHeight],
+      [-mendongLength/2,wallWidth/2,mendongHeight]
+      ]
+    type: wall
+
+  - path: [
+      [-mendongLength/2,-0/2,mendongHeight],
+      [-mendongLength/2,-0/2,0,],
+      [-mendongLength/2,wallWidth/2,0],
+      [-mendongLength/2,wallWidth/2,mendongHeight]
+      ]
+    type: wall
+
+  - path: [
+      [mendongLength/2,-0/2,mendongHeight],
+      [mendongLength/2,-0/2,0,],
+      [mendongLength/2,wallWidth/2,0],
+      [mendongLength/2,wallWidth/2,mendongHeight]
+      ]
+    type: wall
+
+
+  #门洞  描述门洞的轮廓
+holes:
+  - path: [
+    [-mendongLength / 2, -wallWidth/2,  mendongHeight],
+    [mendongLength / 2,  -wallWidth/2,  mendongHeight],
+    [mendongLength / 2,  -wallWidth/2, -0.001],
+    [-mendongLength / 2, -wallWidth/2, -0.001]]
+    extrude: [0, wallWidth, 0]
+
+  #吸附
+snappings:
+  active:
+    - type: wall
+      point: [0, wallWidth/2, 0]
+      direction: [0, -1, 0]
+      behaviors:
+
+
+        # 门槛石下沉，读取本房间下沉高度和隔壁房间下沉高度
+        - 'thisRoomFloorHeight = wall.room.floorHeight'
+        - 'nextRoomFloorHeight = wall.oppositeWall.room.floorHeight'
+
+        # 关于完成面的吸附
+        - 'thisfsThick = wall.fsThick'
+        - 'nextfsThick = wall.oppositeWall.fsThick'
+        - 'width = wall.width'
+        - 'Zfhick = wall.fsThick'
+        - 'Ffhick = wall.oppositeWall.fsThick'
+        # 自适应天花高度
+        - 'ceilHeightB = wall.room.ceilingHeight'
+        - 'ceilHeightF = wall.oppositeWall.room.ceilingHeight'
+
+
+
+ #  切踢脚线
+moldingOptions:
+  # 外截面  描述需要切开踢脚线的轮廓，到门套的位置 0.02表示门套盖门洞20，踢脚线应该在门套位置断开，具体数值看需求
+
+  - conditions:
+        - IJJIAOXIAO == true
+    type: cut
+    path: [
+      [-(mendongLength)/2, -wallWidth/2, 0], 
+      [ (mendongLength)/2, -wallWidth/2, 0],
+      [ (mendongLength)/2, -wallWidth/2, 0.5/2],
+      [-(mendongLength)/2, -wallWidth/2, 0.5/2]
+    ]
+
+    extrude: [0, (wallWidth-jsbanWidth)/2, 0]
+
+ # 内截面  描述需要切开踢脚线的轮廓，到门套的位置
+
+  - conditions:
+        - IJJIAOXIAO == true
+    type: cut
+    path: [
+      [-(mendongLength)/2, wallWidth/2, 0], 
+      [ (mendongLength)/2, wallWidth/2, 0],
+      [ (mendongLength)/2, wallWidth/2, 0.5/2],
+      [-(mendongLength)/2, wallWidth/2, 0.5/2]
+    ]
+    extrude: [0, -(wallWidth-jsbanWidth)/2, 0]
+
+
+
+  - conditions:
+        - IJJIAOXIAO == false
+    type: cut
+    path: [
+      [-(mendongLength)/2, -wallWidth/2, 0], 
+      [ (mendongLength)/2, -wallWidth/2, 0],
+      [ (mendongLength)/2, -wallWidth/2, 0.5/2],
+      [-(mendongLength)/2, -wallWidth/2, 0.5/2]
+    ]
+
+    extrude: [0, 0, 0]
+
+ # 内截面  描述需要切开踢脚线的轮廓，到门套的位置
+
+  - conditions:
+        - IJJIAOXIAO == false
+    type: cut
+    path: [
+      [-(mendongLength)/2, wallWidth/2, 0], 
+      [ (mendongLength)/2, wallWidth/2, 0],
+      [ (mendongLength)/2, wallWidth/2, 0.5/2],
+      [-(mendongLength)/2, wallWidth/2, 0.5/2]
+    ]
+    extrude: [0, 0, 0]
+
+
+
+
+
+
+
+
+
+
+
+ # 拉伸点，在前端2d下可拉伸的距离
+linearComponent:
+    startCtrlPoint: [-mendongLength/2,0,0]
+    endCtrlPoint: [mendongLength/2,0,0]
+    behaviors:
+        - mendongLength = value
+
+  #定义模型在2d上的标尺   这里是写的门洞尺寸，具体需要到哪的标尺看需求
+      # point: 定义标尺的起始点
+    # direction: 定义标尺的射线方向
+dimensions:
+  - point: [-mendongLength/2, 0 , 0]
+    direction: [-1, 0, 0]
+  - point: [ mendongLength/2, 0 , 0]
+    direction: [1, 0, 0]
+  # - point: [-mendongLength/2,  0 , 0]
+  #   direction: [-1, 0, 0]
+  # - point: [ mendongLength/2,  0 , 0]
+  #   direction: [1, 0, 0]
+
+
+dwgView:
+  name: 平开门
+  baseVec: [0, -1, 0]
+  detailDrawings: []
+# 施工图墙面投影线框
+  dwgUserData:
+    validOBB:
+      pos: [0,(Ffhick-Zfhick)/2, (mendongHeight)/ 2]
+      xAxis: [1,0,0]
+      yAxis: [0,1,0]
+      zAxis: [0,0,1]
+      xHalfLength: mendongLength / 2
+      yHalfLength:  (wallWidth-Zfhick-Ffhick) / 2
+      zHalfLength: (mendongHeight)/ 2
+  # 平面图
+  top:
+    #表示模型图块的部分  ，门的平面图由门扇门套门槛石等分别形成的，所以有多个图块，具体情况看项目需求
+    modelSymbols:
+
+      - modelName: '平面-门'
+        isInConstructionDrawing: true
+        symbolName: '定制品图块:B标阳台双扇推拉门_T1'
+        basePoint: [0, 0, 0]
+        symbolWidth: -1
+        symbolHeight: -1
+        layer: 'P-门'
+        zIndex: 20
+        rotation: rotation.z 
+        properties:
+          - type: 'number'
+            name: distance1
+            value: mendongLength*1000
+          - type: 'number'
+            name: distance2
+            value: wallWidth*1000
+
+          - type: 'number'
+            name: flip
+            value: 'xFlip ? 1 : 0'
+      - conditions:
+          - isHaveStone == true
+        modelName: '平面-地花'
+        isInConstructionDrawing: true
+        symbolName: '定制品图块:B标阳台双扇推拉门_T3'
+        basePoint: [0, 0, 0]
+        symbolWidth: -1
+        symbolHeight: -1
+        layer: 'F-地坪填充'
+        zIndex: 20
+        rotation: rotation.z 
+        properties:
+          - type: 'number'
+            name: distance1
+            value: mendongLength*1000
+          - type: 'number'
+            name: distance2
+            value: wallWidth*1000
+          - type: 'number'
+            name: flip
+            value: 'xFlip ? 1 : 0'
+      - conditions:
+          - isHaveStone == true
+        modelName: '平面-地花'
+        isInConstructionDrawing: true
+        symbolName: '定制品图块:B标阳台双扇推拉门_T4'
+        basePoint: [0, 0, 0]
+        symbolWidth: -1
+        symbolHeight: -1
+        layer: 'F-地坪填充'
+        zIndex: 20
+        rotation: rotation.z 
+        properties:
+          - type: 'number'
+            name: distance1
+            value: mendongLength*1000
+          - type: 'number'
+            name: distance2
+            value: wallWidth*1000
+          - type: 'number'
+            name: flip
+            value: 'xFlip ? 1 : 0'
+      - modelName: '平面-天花'
+        isInConstructionDrawing: true
+        # symbolName: '定制品图块:B标阳台双扇推拉门_T2'
+        symbolName: '定制品图块:天花门洞线_T'
+        basePoint: [0, 0, 0]
+        symbolWidth: -1
+        symbolHeight: -1
+        layer: 'C-顶面造型线'
+        zIndex: 20
+        rotation: rotation.z 
+        properties:
+          - type: 'number'
+            name: distance1
+            value: mendongLength*1000
+          - type: 'number'
+            name: distance2
+            value: wallWidth*1000
+          - type: 'number'
+            name: flip
+            value: 'xFlip ? 1 : 0'
+
+
+
+# #     # #表示文字标注  带可编辑文字的类型，
+# #     # #！！！！注意可编辑文字的写法平面和立面！字段不同
+# #     # elements:
+# #     #   - conditions:
+# #     #       - isHaveStone == true
+# #     #     isInConstructionDrawing: true
+# #     #     # 生成的文字标注和引线所在的图层
+# #     #     layer: 'JK_DIM厨卫阳台地面尺寸'
+# #     #     #生成标注的方向，可单个可多个
+# #     #     preferDirections: [left,right]
+# #     #     #sample表示在放样图中生成此标注，注意跟正常图中写法不一样
+# #     #     floorPlanName: 'sample'
+# #     #     #地面是只标注生成在地面图中，具体文字根据需求修改
+# #     #     samplePlanName: 地面
+# #     #     isStraight: true
+# #     #     # 表示索引点，定义一个点的位置，引线从这个位置出发
+# #     #     target:
+# #     #       type: point
+# #     #       data: [0,0,0]
+# #     #     #此字段表示的是引用的可编辑文字的块  
+# #     #     marking:
+# #     #       type: symbol
+# #     #       data:
+# #     #         symbolName: '材料索引带标高'
+# #     #         values:
+# #     #           # 可编辑文字中，名称对应的具体数值
+# #     #           - name: '类别'
+# #     #             data: 'DZ'
+# #     #           - name: '编号'
+# #     #             data: '03'
+# #     #           - name: '名称'
+# #     #             data: '通体砖'  
+# #     #           - name: '标高'
+# #     #             data: '±0.000'  
+
+
+# #     #   # 这里也是文字标注，是没有引用可编辑文字的纯文字标注
+# #     #   - conditions:
+# #     #       - sideEntry == 生成
+# #     #     isInConstructionDrawing: true
+# #     #     #这里的floorPlanName跟放样图是不一样，当标注不需要生成在放样图的时候需要填写这个标注具体在哪一张图中生成
+# #     #     floorPlanName: 'PL-07'
+# #     #     #标注的图层
+# #     #     layer: 'JK_DIM地面尺寸'
+# #     #     #标注生成的方向，up，down
+# #     #     preferDirections: [left,right]
+# #     #     isStraight: true
+# #     #     #标注索引点
+# #     #     target:
+# #     #       type: point
+# #     #       data: [0, wallWidth/2-0.002, 0]
+# #     #     #这里表示纯文字的标注，text后面直接写对应文字即可
+# #     #     marking:
+# #     #       type: text
+# #     #       data:
+# #     #         - '木地板扣条'
+# #     #         #如果文字需要展示两行，就把在写一个
+# #     #         # - '木地板扣条'
+
+
+# #     # #可以用脚本划线，定义以下字段，平面立面都可以划线，谁用写在谁的下面
+# #     # # 防水线轮廓  门洞宽到原墙的部分
+# #     # extraPolylines: 
+# #     #   # 线的图层
+# #     #   - layer: '0-防水'
+# #     #     #线型
+# #     #     lineType: 'ByLayer'
+# #     #     #可以描述一根线的两个点
+# #     #     # points: [[-totalLength/2 , -wallWidth/2 + thisfsThick, 0], [totalLength/2 , -wallWidth/2 + thisfsThick, 0]]
+# #     #     #也可以描述一个轮廓
+# #     #     points: [
+# #     #       [-mendongLength/2 , -wallWidth/2 + nextfsThick, 0],
+# #     #       [mendongLength/2 , -wallWidth/2 + nextfsThick, 0],
+# #     #       [mendongLength/2, wallWidth/2 - thisfsThick, 0],
+# #     #       [-mendongLength/2, wallWidth/2 - thisfsThick, 0]
+# #     #     ]
+# #     #     #线型的颜色值
+# #     #     colorIndex: 6
+# #     #     inPaperSpace: false
+# #     #     # 线型的比例
+# #     #     lineScale: 1
+# #     #     #线的遮罩层级
+# #     #     zIndex: 80
+
+# #     # #可以在脚本里直接定义一个填充图案
+# #     # # 防水填充
+# #     # hatchs:
+# #     #   - isInConstructionDrawing: true
+# #     #     #填充的图层
+# #     #     layer: '0-防水'
+# #     #     #填充的图案名称，cad里面叫什么就填什么就好
+# #     #     pattern: 'ANSI38'
+# #     #     #填充的原点
+# #     #     originPoint: [0, 0, 0]
+# #     #     #填充需要旋转的角度
+# #     #     angle: 0
+# #     #     #填充比例
+# #     #     scale: 400
+# #     #     #填充颜色
+# #     #     colorIndex: 251
+# #     #     #填充的遮罩层级
+# #     #     zIndex: 80
+# #     #     #需要填充的轮廓，这里的轮廓必须是闭合的点，例如四个点确定一个矩形，正常描述四个点就行，这里需要把最后一个点闭合起来，所以要描述五个
+# #     #     closePolygon: 
+# #     #       -
+# #     #         - [-mendongLength/2 , -wallWidth/2 + nextfsThick, 0]
+# #     #         - [mendongLength/2 , -wallWidth/2 + nextfsThick, 0]
+# #     #         - [mendongLength/2, wallWidth/2 - thisfsThick, 0]
+# #     #         - [-mendongLength/2, wallWidth/2 - thisfsThick, 0]
+# #     #         - [-mendongLength/2 , -wallWidth/2 + nextfsThick, 0]
+
+
+# #     # # # 内部标尺
+# #     # # dimensions:
+# #     # #   - isInConstructionDrawing: true
+# #     # #     #标注生成所在的图层
+# #     # #     layer: 'JK_DIM交标家具尺寸'
+# #     # #     #标注需要生成在哪一张图纸里面，必须要写
+# #     # #     floorPlanName: 'PL-06'
+# #     # #     # 表示标尺的点集，可为多个连续的点
+# #     # #     points: [[-mendongLength/2, -wallWidth/2, 0],[mendongLength/2, -wallWidth/2, 0]]
+# #     # #     # 表示标尺点集之间的数据，不填则默认为两点之间距离
+# #     # #     overrideText: []
+# #     # #     # 表示标尺的拉伸
+# #     # #     # 一下数据为向上拉伸0.1m
+# #     # #     textOffset: [0.2, -0.2]
+# #     # #     # 表示文字方向
+# #     # #     # 可选值为：up/down/left/right
+# #     # #     direction: down
+
+# #     # # # 外部标尺
+# #     # # outsideDimensions:
+# #     # #   -
+# #     # #     - isInConstructionDrawing: true
+# #     # #       # 表示标尺的点集，可为多个连续的点
+# #     # #       layerNumber: 1
+# #     # #       # 同dimensions
+# #     # #       points: [
+# #     # #         [-mendongLength/2, 0, 0],
+# #     # #         [mendongLength/2, 0, 0]
+# #     # #       ]
+# #     # #       # 表示标尺点集之间的数据，不填则默认为两点之间距离
+# #     # #       overrideText: []
+# #     # #       # 表示文字方向
+# #     # #       # 可选值为：up/down/left/right
+# #     # #       direction: down
+
+
+  #施工图的正立面
+  front:
+    modelSymbols:
+      # 正立面 外侧
+      - modelName: '正立面'
+        isInConstructionDrawing: true
+        symbolName: '定制品图块:B标阳台四扇推拉门_F1'
+        basePoint: [0, 0, 0]
+        symbolWidth: -1
+        symbolHeight: -1
+        layer: 'LM-门'
+        zIndex: 25
+        rotation: 0
+        properties:
+          - type: 'number'
+            name: distance1
+            value: (mendongLength)*1000
+
+          - type: 'number'
+            name: distance2
+            value: (mendongHeight)*1000
+
+          - type: 'number'
+            name: distance3
+            value: (mendongLength/2)*1000
+
+          - type: 'number'
+            name: flip
+            value: 'xFlip ? 1 : 0'
+
+      - modelName: '正立面'
+        isInConstructionDrawing: true
+        symbolName: '定制品图块:门洞线_F2'
+        basePoint: [0, 0, 0]
+        symbolWidth: -1
+        symbolHeight: -1
+        layer: 'LM-门'
+        zIndex: 26
+        rotation: 0
+        properties:
+          - type: 'number'
+            name: distance1
+            value: (mendongLength)*1000
+
+          - type: 'number'
+            name: distance2
+            value: (mendongHeight)*1000
+
+    # 文字标注
+    elements: 
+      #纯文字标注写法
+      - isInConstructionDrawing: true
+        layer: 'LM-材料'
+        preferDirections: [up]
+        isStraight: true
+        target:
+          type: point
+          data: [-0.2, 0, 0.2]
+        marking:
+          type: text
+          data:
+            - '原建筑趟门'
+
+#       #可编辑文字写法
+#       - isInConstructionDrawing: true
+#         layer: 'LM-材料'
+#         preferDirections: [up]
+#         isStraight: true
+#         target:
+#           type: point
+#           data: [totalLength/2,0,0.1]
+#         marking:
+#           type: symbol
+#           data:
+#             symbolName: '材料索引'
+#             values:
+#               - name: '类别'
+#                 data: 'ST'
+#               - name: '编号'
+#                 data: '01'
+#               - name: '名称'
+#                 data: '石材'  
+#     # extraPolylines: 
+
+
+#     #   # 门洞线
+#     #   - layer: 'LM-门'
+#     #     lineType: 'ByLayer'
+#     #     inPaperSpace: false
+#     #     lineScale: 0.05
+#     #     points: [
+#     #       [-totalLength/2, -totalWidth/2, 0], 
+#     #       [ totalLength/2, -totalWidth/2, 0],
+#     #       [ totalLength/2,  totalWidth/2, 0],
+#     #       [-totalLength/2,  totalWidth/2, 0],
+#     #       [-totalLength/2, -totalWidth/2, 0], 
+#     #       ]
+#     #     colorIndex: 2
+#     #     zIndex: 101  
+
+#     # #内部标尺
+#     # dimensions:
+#     #   -
+#     #     - isInConstructionDrawing: true
+#     #       # 尺寸高度标注去重
+#     #       # repeatKey: 'diaogui'
+#     #       layer: 'JK_DIM平面尺寸'
+#     #       # 表示标尺的点集，可为多个连续的点
+#     #       points: [
+#     #         [-mendongLength/2 , 0, mendongHeight/3],
+#     #         [mendongLength/2 , 0, mendongHeight/3]
+#     #       ]
+#     #       # 表示标尺点集之间的数据，不填则默认为两点之间距离
+#     #       overrideText: []
+#     #       # 表示标尺的拉伸
+#     #       # 一下数据为向上拉伸0.1m
+#     #       textOffset: [0, -0.1]
+#     #       # 表示文字方向
+#     #       # 可选值为：up/down/left/right
+#     #       direction: up  
+
+    #外部标尺
+    outsideDimensions:
+      -
+        - isInConstructionDrawing: true
+          # 表示标尺的点集，可为多个连续的点
+          layerNumber: 1
+          # 同dimensions
+          points: [
+            [-(mendongLength)/2, 0, 0],
+            [(mendongLength)/2, 0, 0]
+          ]
+          # 表示标尺点集之间的数据，不填则默认为两点之间距离
+          overrideText: []
+          # 表示文字方向
+          # 可选值为：up/down/left/right
+          direction: down  
+
+
+  #施工图的背立面
+  back:
+    modelSymbols:
+      # 正立面 外侧
+      - modelName: '正立面'
+        isInConstructionDrawing: true
+        symbolName: '定制品图块:B标阳台四扇推拉门_F1'
+        basePoint: [0, 0, 0]
+        symbolWidth: -1
+        symbolHeight: -1
+        layer: 'LM-门'
+        zIndex: 25
+        rotation: 0
+        properties:
+          - type: 'number'
+            name: distance1
+            value: (mendongLength)*1000
+
+          - type: 'number'
+            name: distance2
+            value: (mendongHeight)*1000
+
+          - type: 'number'
+            name: distance3
+            value: (mendongLength/2)*1000
+
+          - type: 'number'
+            name: flip
+            value: 'xFlip ? 0 : 1'
+      - modelName: '正立面'
+        isInConstructionDrawing: true
+        symbolName: '定制品图块:门洞线_F2'
+        basePoint: [0, 0, 0]
+        symbolWidth: -1
+        symbolHeight: -1
+        layer: 'LM-门'
+        zIndex: 26
+        rotation: 0
+        properties:
+          - type: 'number'
+            name: distance1
+            value: (mendongLength)*1000
+
+          - type: 'number'
+            name: distance2
+            value: (mendongHeight)*1000
+    # 文字标注
+    elements: 
+      #纯文字标注写法
+      - isInConstructionDrawing: true
+        layer: 'LM-材料'
+        preferDirections: [up]
+        isStraight: true
+        target:
+          type: point
+          data: [-0.2, 0, 0.2]
+        marking:
+          type: text
+          data:
+            - '原建筑趟门'
+
+
+#       #可编辑文字写法
+#       - isInConstructionDrawing: true
+#         layer: 'LM-材料'
+#         preferDirections: [up]
+#         isStraight: true
+#         target:
+#           type: point
+#           data: [0.2,0.2,mendongHeight - 0.3]
+#         marking:
+#           type: symbol
+#           data:
+#             symbolName: '材料索引'
+#             values:
+#               - name: '类别'
+#                 data: 'ST'
+#               - name: '编号'
+#                 data: '01'
+#               - name: '名称'
+#                 data: '石材'  
+
+
+#     # #内部标尺
+#     # dimensions:
+#     #   -
+#     #     - isInConstructionDrawing: true
+#     #       # 尺寸高度标注去重
+#     #       # repeatKey: 'diaogui'
+#     #       layer: 'JK_DIM平面尺寸'
+#     #       # 表示标尺的点集，可为多个连续的点
+#     #       points: [
+#     #         [-mendongLength/2 , 0, mendongHeight/3],
+#     #         [mendongLength/2 , 0, mendongHeight/3]
+#     #       ]
+#     #       # 表示标尺点集之间的数据，不填则默认为两点之间距离
+#     #       overrideText: []
+#     #       # 表示标尺的拉伸
+#     #       # 一下数据为向上拉伸0.1m
+#     #       textOffset: [0, -0.1]
+#     #       # 表示文字方向
+#     #       # 可选值为：up/down/left/right
+#     #       direction: up  
+
+    #外部标尺
+    outsideDimensions:
+      -
+        - isInConstructionDrawing: true
+          # 表示标尺的点集，可为多个连续的点
+          layerNumber: 1
+          # 同dimensions
+          points: [
+            [-(mendongLength)/2, 0, 0],
+            [(mendongLength)/2, 0, 0]
+          ]
+          # 表示标尺点集之间的数据，不填则默认为两点之间距离
+          overrideText: []
+          # 表示文字方向
+          # 可选值为：up/down/left/right
+          direction: down  
+
+  #左立面
+  left:
+    modelSymbols:
+      # 正立面 外侧
+      - modelName: '侧立面-平开门'
+        isInConstructionDrawing: true
+        symbolName: '定制品图块:B标阳台双扇推拉门_L1'
+        basePoint: [0, 0, 0]
+        symbolWidth: -1
+        symbolHeight: -1
+        layer: 'LM-门'
+        zIndex: 55
+        rotation: 0
+        properties:
+          - type: 'number'
+            name: distance1
+            value: mendongHeight*1000
+
+
+          - type: 'number'
+            name: flip
+            value: 'xFlip ? 1 : 0'
+
+
+
+#       # - conditions:
+#       #    - isHaveStone == true
+#       #   modelName: '侧立面-平开门'
+#       #   isInConstructionDrawing: true
+#       #   symbolName: '定制品图块:门槛石侧立面1L'
+#       #   basePoint: [0, 0, 0]
+#       #   symbolWidth: -1
+#       #   symbolHeight: -1
+#       #   layer: 'LM-门'
+#       #   zIndex: 55
+#       #   rotation: 0
+#       #   properties:
+#       #     - type: 'number'
+#       #       name: distance1
+#       #       value: wallWidth*1000
+
+#       #     # - type: 'number'
+#       #     #   name: distance2
+#       #     #   value: minFloorHeight*1000
+#       #     - type: 'number'
+#       #       name: flip
+#       #       value: 'xFlip ? 1 : 0'
+
+  #右立面
+  right:
+    modelSymbols:
+      # 正立面 外侧
+      - modelName: '侧立面-平开门'
+        isInConstructionDrawing: true
+        symbolName: '定制品图块:B标阳台双扇推拉门_L1'
+        basePoint: [0, 0, 0]
+        symbolWidth: -1
+        symbolHeight: -1
+        layer: 'LM-门'
+        zIndex: 55
+        rotation: 0
+        properties:
+          - type: 'number'
+            name: distance1
+            value: mendongHeight*1000
+
+
+
+
+#       # - conditions:
+#       #    - isHaveStone == true     
+#       #   modelName: '侧立面-平开门'
+#       #   isInConstructionDrawing: true
+#       #   symbolName: '定制品图块:门槛石侧立面1L'
+#       #   basePoint: [0, 0, 0]
+#       #   symbolWidth: -1
+#       #   symbolHeight: -1
+#       #   layer: 'LM-门'
+#       #   zIndex: 55
+#       #   rotation: 0
+#       #   properties:
+#       #     - type: 'number'
+#       #       name: distance1
+#       #       value: wallWidth*1000
+
+#       #     # - type: 'number'
+#       #     #   name: distance2
+#       #     #   value: minFloorHeight*1000
+#       #     - type: 'number'
+#       #       name: flip
+#       #       value: 'xFlip ? 1 : 0'
+
+# #清单  具体数值安需求写
+# list:
+#   # 门槛石面积
+#   - conditions:
+#       - isHaveStone == true
+#     name: 'thresholdArea'
+#     count: (mendongLength*wallWidth) + ((mendongLength + 0.06)*0.025)    
+
+list:
+  # 宽度
+  - name: 'Length'
+    count: mendongLength+mentaoLength*2-neigaiqaingLength*2
+  - name: 'deep'
+    count: wallWidth
+  # 宽度
+  - name: 'doorlength'
+    count: mendongLength
+  # 周长
+  - name: 'doorpocketlength'
+    count: mendongHeight*2+mendongLength
+  # 门槛石面积
+  - conditions:
+      - isHaveStone == true
+    name: 'thresholdarea'
+    count: mendongLength*(wallWidth - 0)
+
+  # 门槛石材质
+  - conditions:
+      - isHaveStone == true
+    name: 'thresholdmaterial'
+    material: doorStoneMaterial
+dwgMaterial:
+    project: jiali
+    list:
+        - conditions:
+          - isHaveStone==true
+          type: material
+          count: mendongLength*wallWidth
+          value: PJDA5TJY31SMTF12Y
+generalProps:
+  length:
+    get: mendongLength
+    set: 
+      - mendongLength = value
+  width:
+    get: width
+    set: 
+      - width = value
+  height:
+    get: mendongHeight
+    set: 
+      - mendongHeight = value
+
+
